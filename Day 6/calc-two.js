@@ -15,18 +15,21 @@ fs.readFile("./input.txt", {encoding: "utf8"}, function(err, data) {
 		else
 			tree[orbit[1]] = { 'parent' : orbit[0], 'children' : []};
 	});
-	var level = 0;
-	var orbit_count = 0;
-	var bodies = ['COM'];
-	while (bodies.length != 0) {
-		console.log(`[${level}]: ${bodies}`);
-		var next = [];
-		bodies.forEach(body => {
-			orbit_count += level;
-			next = next.concat(tree[body].children);
-		});
-		bodies = next;
-		level += 1;
+
+	var REACHABLE = [];
+	for ( var HEAD = 'YOU' ; tree[HEAD].parent !== null ; HEAD = tree[HEAD].parent )
+		REACHABLE.push(HEAD);
+
+	var path = 0;
+	for ( var HEAD = 'SAN' ; tree[HEAD].parent !== null ; HEAD = tree[HEAD].parent ) {
+		if (REACHABLE.indexOf(HEAD) == -1) {
+			path += 1;
+			continue;
+		}
+
+		path += REACHABLE.indexOf(HEAD);
+		break;
 	}
-	console.log(orbit_count);
+
+	console.log(path-2);
 });
