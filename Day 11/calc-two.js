@@ -9,7 +9,7 @@ fs.readFile("./input.txt", {encoding: "utf8"}, function(err, data) {
 
 	var toggle_paint_move = true;
 
-	var painted_tiles = [];
+	var painted_tiles = [{ 'x' : 0, 'y' : 0, 'color' : 1 }];
 	var x = 0;
 	var y = 0;
 	var dir = "UP";
@@ -39,7 +39,6 @@ fs.readFile("./input.txt", {encoding: "utf8"}, function(err, data) {
 		IP += 2;
 	}
 	function OUTPUT ( par, src ) {
-		console.log(`OUTPUT: ${read(par, src)}`);
 		if (toggle_paint_move) {
 			var color = read(par, src);
 			if (painted_tiles.filter(tile => tile.x == x && tile.y == y).length != 0)
@@ -96,12 +95,30 @@ fs.readFile("./input.txt", {encoding: "utf8"}, function(err, data) {
 			case 8: EQUALS       (Math.floor(memory[IP]/100)%10, memory[IP+1], Math.floor(memory[IP]/1000)%10, memory[IP+2], Math.floor(memory[IP]/10000)%10, memory[IP+3]); break;
 			case 9: REBASE       (Math.floor(memory[IP]/100)%10, memory[IP+1]                                                                                             ); break;
 			case 99:
-				console.log(`Painted ${painted_tiles.length} tiles.`);
+				external_camera ();
 			return;
 			default:
 				console.log(`UNSUPPORTED OPERATION ${memory[IP]} at IP(${IP})`);
 				console.log(memory);
 				return;
+		}
+	}
+
+	function external_camera ( ) {
+		var minx = painted_tiles.map(tile => tile.x).reduce((l, r) => l < r ? l : r);
+		var maxx = painted_tiles.map(tile => tile.x).reduce((l, r) => l > r ? l : r);
+		var miny = painted_tiles.map(tile => tile.y).reduce((l, r) => l < r ? l : r);
+		var maxy = painted_tiles.map(tile => tile.y).reduce((l, r) => l > r ? l : r);
+
+		for ( var y = miny ; y <= maxy ; ++y ) {
+			var string = "";
+			for ( var x = minx ; x <= maxx ; ++x ) {
+				if (painted_tiles.filter(tile => tile.x == x && tile.y == y).length != 0) {
+					string += painted_tiles.filter(tile => tile.x == x && tile.y == y)[0].color ? "#" : ".";
+				} else
+					string += ".";
+			}
+			console.log(string);
 		}
 	}
 });
