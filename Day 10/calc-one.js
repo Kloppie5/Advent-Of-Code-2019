@@ -42,7 +42,7 @@ function find_best_station_location ( filename, callback ) {
 			}
 			// console.log(asteroids[a1]);
 		}
-
+		
 		callback(asteroids.map(asteroid => asteroid.v).reduce((l, r) => l > r ? l : r));
 	});
 }
